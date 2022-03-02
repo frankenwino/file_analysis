@@ -3,14 +3,13 @@
 import hashlib
 import subprocess
 import json
-import sys
-import logging
+# import sys
+# import logging
 import os
-from pprint import pprint
+# from pprint import pprint
 import magic
 # import osslsigncode
 import certificate_checker as certificate_checker
-
 
 
 class FileInfo(object):
@@ -24,11 +23,9 @@ class FileInfo(object):
             self.output = subprocess.check_output([self.exiftool, "-j", self.file_path])
             self.exiftool_output_dict = json.loads(self.output.decode('utf-8'))[0]
             # pprint(self.exiftool_output_dict)
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
             self.exiftool_output_dict = None
-
         # pprint(self.exiftool_output_dict)
-
 
     def none_checker(self, none_item):
         self.none_item = str(none_item).strip()
@@ -36,7 +33,6 @@ class FileInfo(object):
             self.none_item = None
 
         return self.none_item
-
 
     def pe_type(self):
         if self.exiftool_output_dict is not None:
@@ -49,17 +45,14 @@ class FileInfo(object):
 
         return self.pe_type_info
 
-
     def mime_type(self):
         return magic.from_file(self.file_path, mime=True)
-
 
     def file_type(self):
         """
         e.g. PDF document, version 1.2
         """
-        return magic.from_file(self.file_path)#magic.from_buffer(open(self.file_path, encoding="utf8", errors='ignore').read(1024))
-
+        return magic.from_file(self.file_path)  # magic.from_buffer(open(self.file_path, encoding="utf8", errors='ignore').read(1024))
 
     def product_name(self):
         if self.exiftool_output_dict is not None:
@@ -72,7 +65,6 @@ class FileInfo(object):
 
         return self.product_name_info
 
-
     def original_file_name(self):
         if self.exiftool_output_dict is not None:
             try:
@@ -83,7 +75,6 @@ class FileInfo(object):
             self.original_file_name_info = None
 
         return self.original_file_name_info
-
 
     def company_name(self):
         if self.exiftool_output_dict is not None:
@@ -96,7 +87,6 @@ class FileInfo(object):
 
         return self.company_name_info
 
-
     def product_version(self):
         if self.exiftool_output_dict is not None:
             try:
@@ -107,7 +97,6 @@ class FileInfo(object):
             self.product_version_info = None
 
         return self.product_version_info
-
 
     def object_file_type(self):
         if self.exiftool_output_dict is not None:
@@ -120,7 +109,6 @@ class FileInfo(object):
 
         return self.object_file_type_info
 
-
     def extension(self):
         if self.exiftool_output_dict is not None:
             try:
@@ -131,7 +119,6 @@ class FileInfo(object):
             self.extension_info = None
 
         return self.extension_info
-
 
     def file_size(self):
         return os.path.getsize(self.file_path)
@@ -145,21 +132,6 @@ class FileInfo(object):
                 self.hasher.update(self.buf)
                 self.buf = self.afile.read(self.BLOCKSIZE)
         return self.hasher.hexdigest()
-
-    # def md5(self):
-    #
-    #     self.md5sum_output = subprocess.check_output([self.md5sum, self.file_path])
-    #     self.split_md5sum_output = self.md5sum_output.decode().split(" ")
-    #     # self.md5sum_output.decode().split(" ")[0]
-    #
-    #     return self.split_md5sum_output[0]
-
-
-
-    # def cert_check(self):
-    #     self.cert_object = osslsigncode.CertificateCheck(self.file_path, self.pe_type())
-    #     self.cert = self.cert_object.get_cert_subject()
-    #     return self.cert
 
     def cert_check(self):
         self.cert = certificate_checker.check_cert(self.file_path)
@@ -280,8 +252,11 @@ class FileInfo(object):
 #     level=logging.INFO
 #     )
 
+
 if __name__ == "__main__":
-    from pprint import pprint
-    file_path = "/home/andy/Documents/Scripts/lavasoft/downloads/WCInstaller(site).exe"
-    fileinfo_object = FileInfo(file_path)
-    pprint(fileinfo_object.all_file_info_not_none())
+    pass
+
+    # from pprint import pprint
+    # file_path = "/home/downloads/WCInstaller(site).exe"
+    # fileinfo_object = FileInfo(file_path)
+    # pprint(fileinfo_object.all_file_info_not_none())
