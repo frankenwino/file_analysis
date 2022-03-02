@@ -1,6 +1,6 @@
 import vt
-from pprint import pprint
-import time
+# from pprint import pprint
+# import time
 import os
 import utils
 from file_info import FileInfo
@@ -12,6 +12,7 @@ def check_file(file_md5):
 
     return scan_result
 
+
 def upload_file(file_path):
     print(f"{utils.now()} - Uploading {file_path}")
     with open(file_path, "rb") as f:
@@ -19,20 +20,6 @@ def upload_file(file_path):
     print(f"{utils.now()} - Upload completed")
 
     return analysis.id
-
-
-# def analysis_status(analysis_id):
-#     print(f"{utils.now()} - Checking analysis status of {analysis_id}")
-#     while True:
-#         analysis = client.get_object(f"/analyses/{analysis_id}")
-#         #print(analysis.status)
-#         if analysis.status == "completed":
-#             print(f"{utils.now()} - Analysis complete {analysis_id}")
-#             return
-#         else:
-#             sleep_time = 30
-#             time.sleep(sleep_time)
-#             print(f"{utils.now()} - Checking analysis status. Sleeping {sleep_time} seconds")
 
 
 def analysis_status(analysis_id):
@@ -50,6 +37,7 @@ def last_analysis_results(file_md5):
     last_analysis_results = scan_result.last_analysis_results
 
     return last_analysis_results
+
 
 def all_scan_results(file_md5):
     """
@@ -155,8 +143,8 @@ def all_scan_results(file_md5):
     except AttributeError:
         pass
 
-
     return result_dict
+
 
 def get_apy_key():
     config_dir = os.path.dirname(os.path.abspath(__file__))
@@ -165,6 +153,7 @@ def get_apy_key():
     api_key = config_data["virus_total"]["api"]
 
     return api_key
+
 
 api_key = get_apy_key()
 client = vt.Client(api_key)
@@ -177,7 +166,7 @@ if __name__ == "__main__":
     file_info_object = FileInfo(file_path)
     file_md5 = file_info_object.md5()
 
-    get_all_scan_results(file_md5)
+    all_scan_results(file_md5)
 
     import sys
     sys.exit(0)
@@ -189,7 +178,7 @@ if __name__ == "__main__":
 
     scan_result = check_file(file_md5)
     print(dir(scan_result))
-    #pprint(scan_result.last_analysis_results, indent=4)
+    # pprint(scan_result.last_analysis_results, indent=4)
 
     """
     # scanned_file = client.get_object(f"/files/{file_md5}")
@@ -203,5 +192,4 @@ if __name__ == "__main__":
     # utils.create_json_file(json_file_path, last_analysis_results)
     """
 
-
-   # analysis_status(analysis_id="MDQ3ZDc0NmM4N2FjZWExMGY2NWZiNjY3ZDRhYTMyY2Q6MTY0NjAzODEwNw==")
+    # analysis_status(analysis_id="MDQ3ZDc0NmM4N2FjZWExMGY2NWZiNjY3ZDRhYTMyY2Q6MTY0NjAzODEwNw==")
