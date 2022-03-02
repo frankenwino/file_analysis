@@ -5,6 +5,7 @@ import os
 import signal
 import sys
 
+
 def osslsigncode_installed():
     """
     Checks if osslsigncode is installed. If not, an error is raised.
@@ -13,7 +14,8 @@ def osslsigncode_installed():
         True        Only returned if osslsigncode is installed.
     """
     try:
-        output = subprocess.check_output(["which", "osslsigncode"]).decode().strip()
+        output = subprocess.check_output(
+            ["which", "osslsigncode"]).decode().strip()
 
         return True
 
@@ -57,9 +59,12 @@ def is_pe(file_path):
 
 
 def timeout_handler(signum, frame):
-    signal_error_message = "Signal handler called with signal {}".format(signum)
-    too_long_error_message = "osslsigncode taking too long to respond. It force quit after {} seconds. Probably hanging.".format(osslsigncode_timeout_length)
-    os_error_message = "{} {}".format(too_long_error_message, signal_error_message)
+    signal_error_message = "Signal handler called with signal {}".format(
+        signum)
+    too_long_error_message = "osslsigncode taking too long to respond. It force quit after {} seconds. Probably hanging.".format(
+        osslsigncode_timeout_length)
+    os_error_message = "{} {}".format(
+        too_long_error_message, signal_error_message)
     print(os_error_message)
 
     raise OSError(os_error_message)
@@ -89,8 +94,8 @@ def osslsigncode_verify(file_path):
                     "osslsigncode",
                     "verify",
                     file_path
-                    ]
-                ).decode().strip()
+                ]
+            ).decode().strip()
             signal.alarm(0)
             return osslsigncode_output
         except (OSError, subprocess.CalledProcessError):  # as e:
@@ -134,7 +139,8 @@ def parse_osslsigncode_verify_output(osslsigncode_output):
     if osslsigncode_output is not None:
         # Get total amount of signers from osslsigncode output
         split_sslsigncode_output = osslsigncode_output.split("\n")
-        total_signers, signers_list_index = get_total_signers(split_sslsigncode_output)
+        total_signers, signers_list_index = get_total_signers(
+            split_sslsigncode_output)
 
         # Iterate through all signers subject info
         if signers_list_index is not None:

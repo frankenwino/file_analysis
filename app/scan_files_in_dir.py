@@ -45,7 +45,7 @@ def upload_files():
             {"_id": doc["_id"]},
             {"$set": {"uploaded": True, "analysis_id": analysis_id}},
             upsert=False
-            )
+        )
         print(f"{utils.now()} - Analysis id: {analysis_id}")
         if count < total:
             print(f"{utils.now()} - Sleeping {virus_total_sleep_time} seconds")
@@ -65,12 +65,14 @@ def retrieve_analysis_status():
             count += 1
             print(f"{utils.now()} - {count} of {total}")
             # pprint(doc, indent=4)
-            analysis_complete_status = virus_total.analysis_status(doc["analysis_id"])
+            analysis_complete_status = virus_total.analysis_status(
+                doc["analysis_id"])
             if analysis_complete_status is True:
                 print(f"{utils.now()} - Analysis status: complete")
                 collection.update_one(
                     {"_id": doc["_id"]},
-                    {"$set": {"vt_analysis_complete": True, "vt_analysis_retrieved": False}},
+                    {"$set": {"vt_analysis_complete": True,
+                              "vt_analysis_retrieved": False}},
                     upsert=False)
                 total_remaining -= 1
             else:
@@ -89,7 +91,8 @@ def retrieve_analysis_status():
 
 
 def retrieve_analysis_results():
-    retrieve_query = {"vt_analysis_complete": True, "vt_analysis_retrieved": False}
+    retrieve_query = {"vt_analysis_complete": True,
+                      "vt_analysis_retrieved": False}
     total = collection.count_documents(retrieve_query)
     count = 0
 
@@ -109,7 +112,7 @@ def retrieve_analysis_results():
                 {"_id": doc["_id"]},
                 {"$set": {"vt_analysis_retrieved": True, k: v}},
                 upsert=False
-                )
+            )
 
         if count < total:
             print(f"{utils.now()} - Sleeping {virus_total_sleep_time} seconds")

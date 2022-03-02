@@ -28,7 +28,7 @@ def capa(sample_file_path):
         "-r", capa_rules_dir,
         "-s", capa_sigs_dir,
         sample_file_path
-        ])
+    ])
     output_dict = json.loads(output.decode("utf-8"))
 
     pprint(output_dict, indent=4)

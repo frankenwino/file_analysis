@@ -14,14 +14,17 @@ import certificate_checker as certificate_checker
 
 class FileInfo(object):
     """docstring for ExifTool."""
+
     def __init__(self, file_path):
         self.file_path = file_path
         self.exiftool = "/usr/bin/exiftool"
         self.md5sum = "/usr/bin/md5sum"
 
         try:
-            self.output = subprocess.check_output([self.exiftool, "-j", self.file_path])
-            self.exiftool_output_dict = json.loads(self.output.decode('utf-8'))[0]
+            self.output = subprocess.check_output(
+                [self.exiftool, "-j", self.file_path])
+            self.exiftool_output_dict = json.loads(
+                self.output.decode('utf-8'))[0]
             # pprint(self.exiftool_output_dict)
         except subprocess.CalledProcessError:
             self.exiftool_output_dict = None
@@ -37,7 +40,8 @@ class FileInfo(object):
     def pe_type(self):
         if self.exiftool_output_dict is not None:
             try:
-                self.pe_type_info = self.none_checker(self.exiftool_output_dict["PEType"])
+                self.pe_type_info = self.none_checker(
+                    self.exiftool_output_dict["PEType"])
             except KeyError:
                 self.pe_type_info = None
         else:
@@ -57,7 +61,8 @@ class FileInfo(object):
     def product_name(self):
         if self.exiftool_output_dict is not None:
             try:
-                self.product_name_info = self.none_checker(self.exiftool_output_dict["ProductName"])
+                self.product_name_info = self.none_checker(
+                    self.exiftool_output_dict["ProductName"])
             except KeyError:
                 self.product_name_info = None
         else:
@@ -68,7 +73,8 @@ class FileInfo(object):
     def original_file_name(self):
         if self.exiftool_output_dict is not None:
             try:
-                self.original_file_name_info = self.none_checker(self.exiftool_output_dict["OriginalFileName"])
+                self.original_file_name_info = self.none_checker(
+                    self.exiftool_output_dict["OriginalFileName"])
             except KeyError:
                 self.original_file_name_info = None
         else:
@@ -79,7 +85,8 @@ class FileInfo(object):
     def company_name(self):
         if self.exiftool_output_dict is not None:
             try:
-                self.company_name_info = self.none_checker(self.exiftool_output_dict["CompanyName"])
+                self.company_name_info = self.none_checker(
+                    self.exiftool_output_dict["CompanyName"])
             except KeyError:
                 self.company_name_info = None
         else:
@@ -90,7 +97,8 @@ class FileInfo(object):
     def product_version(self):
         if self.exiftool_output_dict is not None:
             try:
-                self.product_version_info = self.none_checker(self.exiftool_output_dict["ProductVersionNumber"])
+                self.product_version_info = self.none_checker(
+                    self.exiftool_output_dict["ProductVersionNumber"])
             except KeyError:
                 self.product_version_info = None
         else:
@@ -101,7 +109,8 @@ class FileInfo(object):
     def object_file_type(self):
         if self.exiftool_output_dict is not None:
             try:
-                self.object_file_type_info = self.none_checker(self.exiftool_output_dict["ObjectFileType"])
+                self.object_file_type_info = self.none_checker(
+                    self.exiftool_output_dict["ObjectFileType"])
             except KeyError:
                 self.object_file_type_info = None
         else:
@@ -112,7 +121,8 @@ class FileInfo(object):
     def extension(self):
         if self.exiftool_output_dict is not None:
             try:
-                self.extension_info = self.none_checker(self.exiftool_output_dict["FileTypeExtension"])
+                self.extension_info = self.none_checker(
+                    self.exiftool_output_dict["FileTypeExtension"])
             except KeyError:
                 self.extension_info = None
         else:
@@ -152,7 +162,7 @@ class FileInfo(object):
             "md5": self.md5(),
             "certificate_subject": self.cert_check(),
             "size": os.path.getsize(self.file_path)
-            }
+        }
 
     def all_file_info_not_none(self):
         all_info_dict = {}
