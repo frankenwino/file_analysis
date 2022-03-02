@@ -57,10 +57,11 @@ def upload_files():
 def retrieve_analysis_status():
     retrieve_query = {"uploaded": True, "vt_analysis_complete": False}
     total = collection.count_documents(retrieve_query)
+    total_remaining = total
     count = 0
 
-    while total > 0:
-        for doc in collection.find(retrieve_query)[0:total]:
+    while total_remaining > 0:
+        for doc in collection.find(retrieve_query):
             count += 1
             print(f"{utils.now()} - {count} of {total}")
             # pprint(doc, indent=4)
@@ -71,18 +72,19 @@ def retrieve_analysis_status():
                     {"_id": doc["_id"]},
                     {"$set": {"vt_analysis_complete": True, "vt_analysis_retrieved": False}},
                     upsert=False)
-                total -= 1
+                total_remaining -= 1
             else:
                 print(f"{utils.now()} - Analysis status: in progress")
             if count < total:
                 print(f"{utils.now()} - Sleeping {virus_total_sleep_time} seconds ")
                 sleep(virus_total_sleep_time)
 
-        if total > 0:
+        if total_remaining > 0:
+            count = 0
             seconds = 60
             minutes = 10
             analysis_wait_sleep_time = seconds * minutes
-            print(f"{utils.now()} - {total} file analyses still in progess. Sleeping {minutes} minutes")
+            print(f"{utils.now()} - {total_remaining} file analyses still in progess. Sleeping {minutes} minutes")
             sleep(analysis_wait_sleep_time)
 
 
@@ -118,12 +120,13 @@ virus_total_sleep_time = 20
 collection = database.virustotal_db.setup_exe_3
 
 if __name__ == "__main__":
-    file_dir = os.path.dirname(os.path.abspath(__file__))
-    file_dir_split = os.path.split(file_dir)
-    sample_dir = os.path.join(file_dir_split[0], "sample")
-    add_samples_to_database(samples_dir=sample_dir)
-    upload_files()
-    retrieve_analysis_status()
+    # file_dir = os.path.dirname(os.path.abspath(__file__))
+    # file_dir_split = os.path.split(file_dir)
+    # sample_dir = os.path.join(file_dir_split[0], "sample")
+    # add_samples_to_database(samples_dir=sample_dir)
+    # upload_files()
+
+    # retrieve_analysis_status()
     # retrieve_analysis_results()
 
     pass
