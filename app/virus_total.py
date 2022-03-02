@@ -77,7 +77,6 @@ def all_scan_results(file_md5):
         last_analysis_results_dict = scan_result.last_analysis_results
         detection_only_last_analysis_results_dict = detected_only_dict(last_analysis_results_dict)
         result_dict["last_analysis_results"] = detection_only_last_analysis_results_dict
-
     except AttributeError:
         pass
 
