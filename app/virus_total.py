@@ -1,5 +1,5 @@
 import vt
-# from pprint import pprint
+from pprint import pprint
 # import time
 import os
 import utils
@@ -39,6 +39,16 @@ def last_analysis_results(file_md5):
     return last_analysis_results
 
 
+def detected_only_dict(detection_dict):
+    detected_only_dict = {}
+
+    for vendor, vendor_result_dict in sorted(detection_dict.items()):
+        if vendor_result_dict["category"] != "undetected":
+            detected_only_dict[vendor] = vendor_result_dict
+
+    return detected_only_dict
+
+
 def all_scan_results(file_md5):
     """
     Options for scan result
@@ -64,7 +74,10 @@ def all_scan_results(file_md5):
         pass
 
     try:
-        result_dict["last_analysis_results"] = scan_result.last_analysis_results
+        last_analysis_results_dict = scan_result.last_analysis_results
+        detection_only_last_analysis_results_dict = detected_only_dict(last_analysis_results_dict)
+        result_dict["last_analysis_results"] = detection_only_last_analysis_results_dict
+
     except AttributeError:
         pass
 
@@ -147,28 +160,28 @@ def all_scan_results(file_md5):
 
 
 def get_apy_key():
-    config_dir = os.path.dirname(os.path.abspath(__file__))
-    config_file = os.path.join(config_dir, "config", "config.ini")
+    config_file = os.path.join(file_dir, "config", "config.ini")
     config_data = utils.get_config(config_file)
     api_key = config_data["virus_total"]["api"]
 
     return api_key
 
 
+file_dir = os.path.dirname(os.path.abspath(__file__))
 api_key = get_apy_key()
 client = vt.Client(api_key)
 
 if __name__ == "__main__":
-    sys.exit(0)
-    sample_dir = "/home/andy/Documents/Scripts/virus_total/sample"
-
+    file_dir_split = os.path.split(file_dir)
+    sample_dir = os.path.join(file_dir_split[0], "sample")
     file_path = os.path.join(sample_dir, "Setup.exe")
     file_info_object = FileInfo(file_path)
     file_md5 = file_info_object.md5()
 
-    all_scan_results(file_md5)
+    scan_results_dict = all_scan_results(file_md5)
+    pprint(scan_results_dict)
+    utils.create_json_file("last_analysis_results.json", scan_results_dict)
 
-    import sys
     sys.exit(0)
 
     """
