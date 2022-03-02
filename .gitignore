@@ -136,3 +136,4 @@ app/capa-rules/.github/
 app/capa-rules/.gitattributes
 app/config/config.ini
 sample/
+reports/
