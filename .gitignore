@@ -131,5 +131,8 @@ dmypy.json
 # Misc
 app/__pycache__
 app/capa
+app/capa-rules/.git/
+app/capa-rules/.github/
+app/capa-rules/.gitattributes
 app/config/config.ini
 sample/
