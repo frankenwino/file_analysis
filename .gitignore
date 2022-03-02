@@ -129,5 +129,7 @@ dmypy.json
 .pyre/
 
 # Misc
-sample/
+app/__pycache__
+app/capa
 app/config/config.ini
+sample/
