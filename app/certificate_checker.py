@@ -3,7 +3,7 @@ import subprocess
 import magic
 import os
 import signal
-
+import sys
 
 def osslsigncode_installed():
     """
@@ -17,7 +17,7 @@ def osslsigncode_installed():
 
         return True
 
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError:  # as e:
         error_message = "osslsigncode not installed. sudo apt-get install openssl and sudo apt-get install osslsigncode"
         raise OSError(error_message)
 
@@ -36,6 +36,7 @@ def check_file_type(file_path):
     file_type = magic.from_buffer(open(file_path, "rb").read(1024)).strip()
 
     return file_type
+
 
 def is_pe(file_path):
     """
@@ -92,21 +93,20 @@ def osslsigncode_verify(file_path):
                 ).decode().strip()
             signal.alarm(0)
             return osslsigncode_output
-        except (OSError, subprocess.CalledProcessError) as e:
+        except (OSError, subprocess.CalledProcessError):  # as e:
             signal.alarm(0)
-            #fails.append(file_path)
+            # fails.append(file_path)
             return None
-
-
     else:
         return None
+
 
 def parse_subject_line(subject_line):
     subject_name_list = []
     split_subject_line = subject_line.split("/")
 
     for subject_line in split_subject_line:
-        if subject_line.startswith("O="):# or subject_line.startswith("CN="):
+        if subject_line.startswith("O="):  # or subject_line.startswith("CN="):
             subject_name = subject_line.split("=")[-1]
             subject_name_list.append(subject_name)
 
@@ -132,7 +132,7 @@ def parse_osslsigncode_verify_output(osslsigncode_output):
     subjects = []
 
     if osslsigncode_output is not None:
-    # Get total amount of signers from osslsigncode output
+        # Get total amount of signers from osslsigncode output
         split_sslsigncode_output = osslsigncode_output.split("\n")
         total_signers, signers_list_index = get_total_signers(split_sslsigncode_output)
 
@@ -172,6 +172,7 @@ def check_cert(file_path):
         return cert_subject
     else:
         sys.exit(0)
+
 
 osslsigncode_timeout_length = 5
 
