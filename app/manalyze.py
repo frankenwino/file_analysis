@@ -3,6 +3,7 @@ import subprocess
 from pprint import pprint
 import json
 import os
+import converter
 
 """
 https://docs.manalyzer.org/en/latest/index.html
@@ -31,7 +32,9 @@ def manalyze(file_path):
 
     print(f"{utils.now()} - manalyze scan complete")
 
-    return output_dict  # [file_path]
+    serialised_output_dict = converter.serialize(output_dict[file_path])
+
+    return serialised_output_dict  # [file_path]
 
 
 file_dir = os.path.dirname(os.path.abspath(__file__))

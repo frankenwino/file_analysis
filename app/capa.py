@@ -3,7 +3,7 @@ from pprint import pprint
 import json
 import utils
 import os
-
+import converter
 
 def capa(sample_file_path):
     """
@@ -31,6 +31,8 @@ def capa(sample_file_path):
     ])
     output_dict = json.loads(output.decode("utf-8"))
 
+    serialised_output_dict = converter.serialize(output_dict)
+
     # pprint(output_dict, indent=4)
 
     report_file_path = os.path.join(report_dir, "capa.json")
@@ -38,7 +40,7 @@ def capa(sample_file_path):
 
     print(f"{utils.now()} - capa scan complete")
 
-    return output_dict
+    return serialised_output_dict
 
 
 file_dir = os.path.dirname(os.path.abspath(__file__))
