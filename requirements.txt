@@ -4,6 +4,7 @@ async-timeout==4.0.2
 asynctest==0.13.0
 attrs==21.4.0
 capstone==4.0.2
+certifi==2021.10.8
 charset-normalizer==2.0.12
 colorama==0.4.4
 cxxfilt==0.2.2
@@ -38,6 +39,7 @@ pymongo==4.0.1
 python-flirt==0.7.0
 python-magic==0.4.25
 PyYAML==6.0
+requests==2.27.1
 ruamel.yaml==0.17.20
 ruamel.yaml.clib==0.2.6
 six==1.16.0
@@ -49,6 +51,7 @@ termcolor==1.1.0
 tqdm==4.62.3
 typing==3.7.4.3
 typing_extensions==4.1.1
+urllib3==1.26.8
 viv-utils==0.6.9
 vivisect==1.0.5
 vt-py==0.13.1
