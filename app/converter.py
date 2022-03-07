@@ -20,7 +20,7 @@ def convert_numeric_to_str(d):
     return d
 
 def serialize(data):
-    print(f"{__file__}.{sys._getframe(  ).f_code.co_name}")
+    # print(f"{__file__}.{sys._getframe(  ).f_code.co_name}")
     if isinstance(data, types.GeneratorType):
         data = list(data)
     return convert_numeric_to_str(data)
