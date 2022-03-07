@@ -1,11 +1,14 @@
-# import pymongo
+import pymongo
 from pymongo import MongoClient
 
 client = MongoClient()
 # client.drop_database('virustotal')
 virustotal_db = client.virustotal
 cuckoo_db = client.cuckoo
-# db.create_index([('md5', pymongo.ASCENDING)],  unique=True)
+
+client.drop_database('static_analysis')
+static_analysis_db = client.static_analysis
+
 
 if __name__ == "__main__":
     # collection = db.test_collection
