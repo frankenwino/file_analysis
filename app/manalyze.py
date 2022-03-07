@@ -23,7 +23,8 @@ def manalyze(file_path):
     # print(f"{utils.now()} - {this_file}")
 
     # subprocess.call(["manalyze", "-dall", file_path, "-o", "json"])
-    output = subprocess.check_output(["manalyze", "-dall", file_path, "-o", "json"])
+    # output = subprocess.check_output(["manalyze", "-dall", file_path, "-o", "json"])
+    output = subprocess.check_output(["manalyze", "-d", "all", "-p", "all", "--pe", file_path, "-o", "json"])
     output_dict = json.loads(output.decode("utf-8"))
 
     return output_dict  # [file_path]
@@ -38,7 +39,7 @@ if __name__ == "__main__":
 
     manalyze_dict = manalyze(sample_file_path)
 
-    pprint(manalyze_dict, indent=4)
+    # pprint(manalyze_dict, indent=4)
 
     report_dir = os.path.join(file_dir_split[0], "reports")
     if not os.path.isdir(report_dir):
