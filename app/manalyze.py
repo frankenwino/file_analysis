@@ -5,6 +5,7 @@ import json
 import os
 
 """
+https://docs.manalyzer.org/en/latest/index.html
 https://github.com/JusticeRage/Manalyze
 
 Install manalyze
