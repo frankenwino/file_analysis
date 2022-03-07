@@ -9,7 +9,7 @@ import os
 # from pprint import pprint
 import magic
 # import osslsigncode
-import certificate_checker as certificate_checker
+import static.certificate_checker as certificate_checker
 
 
 class FileInfo(object):
