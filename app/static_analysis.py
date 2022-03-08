@@ -1,9 +1,13 @@
 import database
 import static.capa as capa
 import static.manalyze as manalyze
+# import pymongo
 import static.file_info as file_info
 import static.flare_strings as flare_strings
 import static.peframe as peframe
+
+# sample_coll = database.static_analysis_db.test
+# sample_coll.create_index([("md5", pymongo.ASCENDING)], unique=True)
 
 sample_coll = database.sample_coll
 
@@ -24,7 +28,7 @@ if __name__ == "__main__":
         "capa": capa_dict,
         "manalyze": manalyze_dict,
         "peframe": peframe_dict,
-        "string_rank": flare_strings_output_dict
+        "string_rank": string_ranks
     }
 
     # doc = {
