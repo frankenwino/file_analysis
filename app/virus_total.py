@@ -193,6 +193,7 @@ def url_detected_only_dict(detection_dict):
     """
 
     url_detected_only_dict = {}
+
     ignore_list = ["harmless", "undetected"]
 
     for vendor, vendor_result_dict in sorted(detection_dict.items()):
@@ -252,33 +253,135 @@ def url_scan_results(url):
     #     "url": url_result.url
     # }
 
-    url_dict = {
-            "categories": url_result.categories,
-            "context_attributes": url_result.context_attributes,
-            "html_meta": url_result.html_meta,
-            "id": url_result.id,
-            "last_analysis_date": utils.datetime_to_string(url_result.last_analysis_date),
-            "last_analysis_results": url_detected_only_dict(url_result.last_analysis_results),
-            "last_analysis_stats": url_result.last_analysis_stats,
-            "last_final_url": url_result.last_final_url,
-            "last_http_response_code": url_result.last_http_response_code,
-            "last_http_response_content_length": url_result.last_http_response_content_length,
-            "last_http_response_content_sha256": url_result.last_http_response_content_sha256,
-            "last_http_response_headers": url_result.last_http_response_headers,
-            "last_modification_date": utils.datetime_to_string(url_result.last_modification_date),
-            "last_submission_date": utils.datetime_to_string(url_result.last_submission_date),
-            "outgoing_links": url_result.outgoing_links,
-            "relationships": url_result.relationships,
-            "reputation": url_result.reputation,
-            "tags": url_result.tags,
-            "threat_names": url_result.threat_names,
-            "times_submitted": url_result.times_submitted,
-            "title": url_result.title,
-            "total_votes": url_result.total_votes,
-            "trackers": url_result.trackers,
-            "type": url_result.type,
-            "url": url_result.url
-        }
+    url_dict = {}
+    try:
+        url_dict["categories"] = url_result.categories
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["context_attributes"] = url_result.context_attributes
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["html_meta"] = url_result.html_meta
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["id"] = url_result.id
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["last_analysis_date"] = utils.datetime_to_string(url_result.last_analysis_date)
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["last_analysis_results"] = url_detected_only_dict(url_result.last_analysis_results)
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["last_analysis_stats"] = url_result.last_analysis_stats
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["last_final_url"] = url_result.last_final_url
+    except AttributeError:
+        pass
+
+
+    try:
+        url_dict["last_http_response_code"] = url_result.last_http_response_code
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["last_http_response_content_length"] = url_result.last_http_response_content_length
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["last_http_response_content_sha256"] = url_result.last_http_response_content_sha256
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["last_http_response_headers"] = url_result.last_http_response_headers
+    except AttributeError:
+        pass
+
+
+    try:
+        url_dict["last_modification_date"] = utils.datetime_to_string(url_result.last_modification_date)
+    except AttributeError:
+        pass
+
+
+    try:
+        url_dict["last_submission_date"] = utils.datetime_to_string(url_result.last_submission_date)
+    except AttributeError:
+        pass
+
+
+    try:
+        url_dict["outgoing_links"] = url_result.outgoing_links
+    except AttributeError:
+        pass
+
+
+    try:
+        url_dict["relationships"] = url_result.relationships
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["reputation"] = url_result.reputation
+    except AttributeError:
+        pass
+    try:
+        url_dict["tags"] = url_result.tags
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["threat_names"] = url_result.threat_names
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["times_submitted"] = url_result.times_submitted
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["title"] = url_result.title
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["total_votes"] = url_result.total_votes
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["trackers"] = url_result.trackers
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["type"] = url_result.type
+    except AttributeError:
+        pass
+
+    try:
+        url_dict["url"] = url_result.url
+    except AttributeError:
+        pass
 
 
     return url_dict
@@ -290,11 +393,12 @@ client = vt.Client(api_key)
 
 if __name__ == "__main__":
 
-    url = 'https://somedomain.com/foo/bar'
-    url_analysis_id = "u-f27971b54016fe671c69d4ac5101169ebb452064216233a5f194c1c2ada1f5fc-1646758848"  # scan_url(url)
+    url = "http://cacerts.digicert.com/DigiCertSHA2AssuredIDTimestampingCA.crt0"
+    url_analysis_id = "u-b6569cb2af5a8f426bfb55095159375122cdb353b4e5b9f14c324f0960555935-1646769721" # scan_url(url)
+    # print(url_analysis_id)
 
-    print(url_analysis_id)
     # analysis_status(url_analysis_id)
+
     url_scan_results_dict = url_scan_results(url)
 
     pprint(url_scan_results_dict, indent=4)
