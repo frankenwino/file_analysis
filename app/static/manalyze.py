@@ -32,7 +32,6 @@ def manalyze(file_path):
     output_dict = json.loads(output.decode("utf-8"))
 
     print(f"{utils_cheat.now()} - manalyze scan complete")
-    # print("manalyze scan complete")
 
     serialised_output_dict = converter.serialize(output_dict[file_path])
 
