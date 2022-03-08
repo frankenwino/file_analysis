@@ -37,4 +37,4 @@ if __name__ == '__main__':
     # with open("flare.txt", "w") as f:
     #     f.write(flare_output)
     pprint(flare_output_list, indent=4)
-    utils.create_json_file("flare.json", flare_output_list)
+    # utils.create_json_file("flare.json", flare_output_list)
