@@ -17,7 +17,7 @@ sample_coll.create_index([("md5", pymongo.ASCENDING)], unique=True)
 
 client.drop_database('static_and_vt_analysis')
 static_and_vt_analysis_db = client.static_and_vt_analysis
-static_and_vt_analysis_coll = static_and_vt_analysis.test
+static_and_vt_analysis_coll = static_and_vt_analysis_db.test
 static_and_vt_analysis_coll.create_index([("md5", pymongo.ASCENDING)], unique=True)
 
 
