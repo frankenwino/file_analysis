@@ -3,7 +3,7 @@ from . import utils_cheat
 
 def flare(file_path):
 
-    print(f"{utils_cheat.now()} - flarestrings starting")
+    print(f"{utils_cheat.now()} - flarestrings in progress...")
     # print("flarestrings starting")
 
     flarestrings = subprocess.Popen(("flarestrings", "-n", "4", file_path), stdout=subprocess.PIPE)
