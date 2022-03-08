@@ -1,7 +1,7 @@
 import subprocess
 from pprint import pprint
 import json
-import utils
+# import utils
 import os
 import converter
 
@@ -10,7 +10,8 @@ def capa(sample_file_path):
     https://github.com/mandiant/capa/blob/master/doc/installation.md
     https://github.com/mandiant/capa-rules
     """
-    print(f"{utils.now()} - capa scan in progress...")
+    # print(f"{utils.now()} - capa scan in progress...")
+    print("capa scan in progress...")
     capa_rules_dir = os.path.join(file_dir, "capa-rules")
     capa_sigs_dir = os.path.join(file_dir, "capa-sigs")
 
@@ -38,7 +39,8 @@ def capa(sample_file_path):
     report_file_path = os.path.join(report_dir, "capa.json")
     utils.create_json_file(report_file_path, output_dict)
 
-    print(f"{utils.now()} - capa scan complete")
+    # print(f"{utils.now()} - capa scan complete")
+    print("capa scan complete")
 
     return serialised_output_dict
 

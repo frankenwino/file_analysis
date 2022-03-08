@@ -1,4 +1,4 @@
-import utils
+# import utils
 import subprocess
 from pprint import pprint
 import json
@@ -21,7 +21,8 @@ $ manalyze --version
 
 
 def manalyze(file_path):
-    print(f"{utils.now()} - manalyze scan in progress...")
+    # print(f"{utils.now()} - manalyze scan in progress...")
+    print("manalyze scan in progress...")
     # this_file = utils.get_file_method(__file__, sys._getframe(  ).f_code.co_name)
     # print(f"{utils.now()} - {this_file}")
 
@@ -30,7 +31,8 @@ def manalyze(file_path):
     output = subprocess.check_output(["manalyze", "-d", "all", "-p", "all", "--pe", file_path, "-o", "json"])
     output_dict = json.loads(output.decode("utf-8"))
 
-    print(f"{utils.now()} - manalyze scan complete")
+    # print(f"{utils.now()} - manalyze scan complete")
+    print("manalyze scan complete")
 
     serialised_output_dict = converter.serialize(output_dict[file_path])
 

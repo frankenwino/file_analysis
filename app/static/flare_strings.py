@@ -1,13 +1,17 @@
 import subprocess
-import utils
+# import utils
 
 def flare(file_path):
 
-    print(f"{utils.now()} - flarestrings starting")
+    # print(f"{utils.now()} - flarestrings starting")
+    print("flarestrings starting")
+
     flarestrings = subprocess.Popen(("flarestrings", "-n", "4", file_path), stdout=subprocess.PIPE)
     output = subprocess.check_output(("rank_strings", "-s"), stdin=flarestrings.stdout).decode("utf-8")
     flarestrings.wait()
-    print(f"{utils.now()} - flarestrings complete")
+
+    # print(f"{utils.now()} - flarestrings complete")
+    print("flarestrings complete")
 
     split_output = output.split("\n")
     output_list = []
