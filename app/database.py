@@ -4,10 +4,21 @@ from pymongo import MongoClient
 client = MongoClient()
 # client.drop_database('virustotal')
 virustotal_db = client.virustotal
+virustotal_coll = virustotal_db.setup_exe_4
+virustotal_coll.create_index([("md5", pymongo.ASCENDING)], unique=True)
+
 cuckoo_db = client.cuckoo
 
 client.drop_database('static_analysis')
 static_analysis_db = client.static_analysis
+sample_coll = static_analysis_db.test
+sample_coll.create_index([("md5", pymongo.ASCENDING)], unique=True)
+
+
+client.drop_database('static_and_vt_analysis')
+static_and_vt_analysis_db = client.static_and_vt_analysis
+static_and_vt_analysis_coll = static_and_vt_analysis.test
+static_and_vt_analysis_coll.create_index([("md5", pymongo.ASCENDING)], unique=True)
 
 
 if __name__ == "__main__":
