@@ -17,6 +17,7 @@ if __name__ == "__main__":
     # string_ranks = flare_strings.flare(sample_path)
     # capa_dict = capa.capa(sample_path)
     # manalyze_dict = manalyze.manalyze(sample_path)
+    
     peframe_dict = peframe.peframe(sample_path)
 
     # doc = {
