@@ -24,3 +24,8 @@ def json_file_to_dict(json_file_path):
         data = json.load(f)
 
     return data
+
+
+def datetime_to_string(dt_object):
+    dt_string = dt_object.strftime("%Y-%m-%d %H:%M:%S")
+    return dt_string
