@@ -10,7 +10,7 @@ import static.peframe as peframe
 from pprint import pprint
 from time import sleep
 import database
-
+import sys
 
 def add_samples_to_database(samples_dir):
     file_list = []
@@ -36,45 +36,51 @@ def add_samples_to_database(samples_dir):
 
         file_info_object = file_info.FileInfo(file_path)
         file_info_dict = file_info_object.all_file_info_not_none()
-        flare_strings_output_dict = flare_strings.flare(file_path)
-        capa_dict = capa.capa(file_path)
-        manalyze_dict = manalyze.manalyze(file_path)
-        peframe_dict = peframe.peframe(file_path)
+        # flare_strings_output_dict = flare_strings.flare(file_path)
+        # capa_dict = capa.capa(file_path)
+        # manalyze_dict = manalyze.manalyze(file_path)
+        # peframe_dict = peframe.peframe(file_path)
+        #
+        # doc = {
+        #     "md5": file_info_dict["md5"],
+        #     "file_info": file_info_dict,
+        #     "capa": capa_dict,
+        #     "manalyze": manalyze_dict,
+        #     "peframe": peframe_dict,
+        #     "string_rank": flare_strings_output_dict,
+        #     "vt": {
+        #         "uploaded_to_vt": False,
+        #         "vt_analysis_complete" : False,
+        #         "vt_analysis_retrieved" : False
+        #         }
+        # }
 
         doc = {
             "md5": file_info_dict["md5"],
             "file_info": file_info_dict,
-            "capa": capa_dict,
-            "manalyze": manalyze_dict,
-            "peframe": peframe_dict,
-            "string_rank": flare_strings_output_dict,
             "vt": {
                 "uploaded_to_vt": False,
                 "vt_analysis_complete" : False,
                 "vt_analysis_retrieved" : False
                 }
         }
-
         static_and_vt_analysis_coll.insert_one(doc)
-
-
-
 
     return
 
 
 def upload_files():
-    uploaded_query = {"uploaded_to_vt": False}
+    uploaded_query = {"vt.uploaded_to_vt": False}
     total = static_and_vt_analysis_coll.count_documents(uploaded_query)
     count = 0
 
     for doc in static_and_vt_analysis_coll.find(uploaded_query)[0:total]:
         count += 1
         print(f"{utils.now()} - {count} of {total}")
-        analysis_id = virus_total.upload_file(doc["file_path"])
+        analysis_id = virus_total.upload_file(doc["file_info"]["file_path"])
         static_and_vt_analysis_coll.update_one(
             {"_id": doc["_id"]},
-            {"$set": {"uploaded_to_vt": True, "analysis_id": analysis_id}},
+            {"$set": {"vt.uploaded_to_vt": True, "vt.analysis_id": analysis_id}},
             upsert=False
         )
         print(f"{utils.now()} - Analysis id: {analysis_id}")
@@ -85,8 +91,34 @@ def upload_files():
             print(f"{utils.now()} - Uploads complete")
 
 
+def static_analysis():
+    total = static_and_vt_analysis_coll.count_documents({})
+    total_remaining = total
+    count = 0
+
+    for doc in static_and_vt_analysis_coll.find():
+        count += 1
+
+        file_path = doc["file_info"]["file_path"]
+        print(f"{utils.now()} - {count} of {total} - {file_path}")
+
+        flare_strings_output_dict = flare_strings.flare(file_path)
+        capa_dict = capa.capa(file_path)
+        manalyze_dict = manalyze.manalyze(file_path)
+        peframe_dict = peframe.peframe(file_path)
+
+        static_and_vt_analysis_coll.update_one(
+            {"_id": doc["_id"]},
+            {"$set": {"capa": capa_dict,
+                      "manalyze": manalyze_dict,
+                      "peframe": peframe_dict,
+                      "string_rank": flare_strings_output_dict}
+                      },
+            upsert=False)
+
+
 def retrieve_analysis_status():
-    retrieve_query = {"uploaded_to_vt": True, "vt_analysis_complete": False}
+    retrieve_query = {"vt.uploaded_to_vt": True, "vt.vt_analysis_complete": False}
     total = static_and_vt_analysis_coll.count_documents(retrieve_query)
     total_remaining = total
     count = 0
@@ -97,13 +129,13 @@ def retrieve_analysis_status():
             print(f"{utils.now()} - {count} of {total}")
             # pprint(doc, indent=4)
             analysis_complete_status = virus_total.analysis_status(
-                doc["analysis_id"])
+                doc["vt"]["analysis_id"])
             if analysis_complete_status is True:
                 print(f"{utils.now()} - Analysis status: complete")
                 static_and_vt_analysis_coll.update_one(
                     {"_id": doc["_id"]},
-                    {"$set": {"vt_analysis_complete": True,
-                              "vt_analysis_retrieved": False}},
+                    {"$set": {"vt.vt_analysis_complete": True,
+                              "vt.vt_analysis_retrieved": False}},
                     upsert=False)
                 total_remaining -= 1
             else:
@@ -122,8 +154,8 @@ def retrieve_analysis_status():
 
 
 def retrieve_analysis_results():
-    retrieve_query = {"vt_analysis_complete": True,
-                      "vt_analysis_retrieved": False}
+    retrieve_query = {"vt.vt_analysis_complete": True,
+                      "vt.vt_analysis_retrieved": False}
     total = static_and_vt_analysis_coll.count_documents(retrieve_query)
     count = 0
 
@@ -141,7 +173,7 @@ def retrieve_analysis_results():
         for k, v in all_scan_results_dict.items():
             static_and_vt_analysis_coll.update_one(
                 {"_id": doc["_id"]},
-                {"$set": {"vt_analysis_retrieved": True, k: v}},
+                {"$set": {"vt.vt_analysis_retrieved": True, k: v}},
                 upsert=False
             )
 
@@ -157,10 +189,11 @@ if __name__ == "__main__":
     file_dir = os.path.dirname(os.path.abspath(__file__))
     file_dir_split = os.path.split(file_dir)
     sample_dir = os.path.join(file_dir_split[0], "sample")
-    add_samples_to_database(samples_dir=sample_dir)
 
+    # add_samples_to_database(samples_dir=sample_dir)
     # upload_files()
-    # retrieve_analysis_status()
-    # retrieve_analysis_results()
+    # static_analysis()
+    retrieve_analysis_status()
+    retrieve_analysis_results()
 
     pass
