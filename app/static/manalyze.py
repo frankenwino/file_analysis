@@ -1,4 +1,4 @@
-# import utils
+from . import utils_cheat
 import subprocess
 from pprint import pprint
 import json
@@ -21,18 +21,18 @@ $ manalyze --version
 
 
 def manalyze(file_path):
-    # print(f"{utils.now()} - manalyze scan in progress...")
-    print("manalyze scan in progress...")
-    # this_file = utils.get_file_method(__file__, sys._getframe(  ).f_code.co_name)
-    # print(f"{utils.now()} - {this_file}")
+    print(f"{utils_cheat.now()} - manalyze scan in progress...")
+    # print("manalyze scan in progress...")
+    # this_file = utils_cheat.get_file_method(__file__, sys._getframe(  ).f_code.co_name)
+    # print(f"{utils_cheat.now()} - {file_path}")
 
     # subprocess.call(["manalyze", "-dall", file_path, "-o", "json"])
     # output = subprocess.check_output(["manalyze", "-dall", file_path, "-o", "json"])
     output = subprocess.check_output(["manalyze", "-d", "all", "-p", "all", "--pe", file_path, "-o", "json"])
     output_dict = json.loads(output.decode("utf-8"))
 
-    # print(f"{utils.now()} - manalyze scan complete")
-    print("manalyze scan complete")
+    print(f"{utils_cheat.now()} - manalyze scan complete")
+    # print("manalyze scan complete")
 
     serialised_output_dict = converter.serialize(output_dict[file_path])
 
@@ -54,4 +54,4 @@ if __name__ == "__main__":
     if not os.path.isdir(report_dir):
         os.makedirs(report_dir)
     report_file = os.path.join(report_dir, "manalyze.json")
-    utils.create_json_file(report_file, manalyze_dict)
+    utils_cheat.create_json_file(report_file, manalyze_dict)
