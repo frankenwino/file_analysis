@@ -3,9 +3,9 @@ from pprint import pprint
 # import time
 import os
 import utils
-from file_info import FileInfo
+from static.file_info import FileInfo
 import sys
-
+import database
 
 def check_file(file_md5):
     scan_result = client.get_object(f"/files/{file_md5}")
