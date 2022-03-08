@@ -1,3 +1,8 @@
+"""
+https://github.com/VirusTotal/vt-py
+https://virustotal.github.io/vt-py/
+"""
+
 import vt
 from pprint import pprint
 # import time
