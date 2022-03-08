@@ -143,6 +143,16 @@ class FileInfo(object):
                 self.buf = self.afile.read(self.BLOCKSIZE)
         return self.hasher.hexdigest()
 
+    def sha256(self):
+        self.BLOCKSIZE = 65536
+        self.hasher = hashlib.sha256()
+        with open(self.file_path, 'rb') as self.afile:
+            self.buf = self.afile.read(self.BLOCKSIZE)
+            while len(self.buf) > 0:
+                self.hasher.update(self.buf)
+                self.buf = self.afile.read(self.BLOCKSIZE)
+        return self.hasher.hexdigest()
+
     def cert_check(self):
         self.cert = certificate_checker.check_cert(self.file_path)
         return self.cert
@@ -160,6 +170,7 @@ class FileInfo(object):
             "object_file_type": self.object_file_type(),
             "extension": self.extension(),
             "md5": self.md5(),
+            "sha256": self.sha256(),
             "certificate_subject": self.cert_check(),
             "size": os.path.getsize(self.file_path)
         }
@@ -177,6 +188,7 @@ class FileInfo(object):
         self.object_file_type = self.object_file_type()
         self.extension = self.extension()
         self.md5 = self.md5()
+        self.sha256 = self.sha256()
         # if self.mime_type not in config.compressed_file_mime_types:
         #     self.md5 = self.md5()
         # else:
@@ -238,6 +250,11 @@ class FileInfo(object):
 
         if self.md5 is not None:
             all_info_dict["md5"] = self.md5
+        else:
+            pass
+
+        if self.sha256 is not None:
+            all_info_dict["sha256"] = self.sha256
         else:
             pass
 
