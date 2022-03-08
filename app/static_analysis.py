@@ -1,13 +1,11 @@
 import database
 import static.capa as capa
 import static.manalyze as manalyze
-import pymongo
 import static.file_info as file_info
 import static.flare_strings as flare_strings
 import static.peframe as peframe
 
-sample_coll = database.static_analysis_db.test
-sample_coll.create_index([("md5", pymongo.ASCENDING)], unique=True)
+sample_coll = database.sample_coll
 
 if __name__ == "__main__":
     sample_path = "/home/andy/Desktop/WcInstaller(1).exe"
@@ -16,23 +14,23 @@ if __name__ == "__main__":
 
     flare_strings_output_dict = flare_strings.flare(sample_path)
 
-    # capa_dict = capa.capa(sample_path)
-    # manalyze_dict = manalyze.manalyze(sample_path)
-    # peframe_dict = peframe.peframe(sample_path)
-    #
-    # doc = {
-    #     "md5": file_info_dict["md5"],
-    #     "file_info": file_info_dict,
-    #     "capa": capa_dict,
-    #     "manalyze": manalyze_dict,
-    #     "peframe": peframe_dict,
-    #     "string_rank": string_ranks
-    # }
+    capa_dict = capa.capa(sample_path)
+    manalyze_dict = manalyze.manalyze(sample_path)
+    peframe_dict = peframe.peframe(sample_path)
 
     doc = {
         "md5": file_info_dict["md5"],
         "file_info": file_info_dict,
-        "string_ranks": flare_strings_output_dict
-        }
+        "capa": capa_dict,
+        "manalyze": manalyze_dict,
+        "peframe": peframe_dict,
+        "string_rank": flare_strings_output_dict
+    }
+
+    # doc = {
+    #     "md5": file_info_dict["md5"],
+    #     "file_info": file_info_dict,
+    #     "string_ranks": flare_strings_output_dict
+    #     }
 
     sample_coll.insert_one(doc)
