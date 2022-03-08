@@ -27,6 +27,14 @@ def upload_file(file_path):
     return analysis.id
 
 
+def scan_url(url):
+    analysis = client.scan_url(url)
+
+    return analysis.id
+
+
+
+
 def analysis_status(analysis_id):
     print(f"{utils.now()} - Checking analysis status of {analysis_id}")
     analysis = client.get_object(f"/analyses/{analysis_id}")
@@ -44,14 +52,14 @@ def last_analysis_results(file_md5):
     return last_analysis_results
 
 
-def detected_only_dict(detection_dict):
-    detected_only_dict = {}
+def file_detected_only_dict(detection_dict):
+    file_detected_only_dict = {}
 
     for vendor, vendor_result_dict in sorted(detection_dict.items()):
         if vendor_result_dict["category"] != "undetected":
-            detected_only_dict[vendor] = vendor_result_dict
+            file_detected_only_dict[vendor] = vendor_result_dict
 
-    return detected_only_dict
+    return file_detected_only_dict
 
 
 def all_scan_results(file_md5):
@@ -80,7 +88,7 @@ def all_scan_results(file_md5):
 
     try:
         last_analysis_results_dict = scan_result.last_analysis_results
-        detection_only_last_analysis_results_dict = detected_only_dict(
+        detection_only_last_analysis_results_dict = file_detected_only_dict(
             last_analysis_results_dict)
         result_dict["last_analysis_results"] = detection_only_last_analysis_results_dict
     except AttributeError:
@@ -172,11 +180,130 @@ def get_apy_key():
     return api_key
 
 
+def url_detected_only_dict(detection_dict):
+
+    """
+    file_detected_only_dict = {}
+
+    for vendor, vendor_result_dict in sorted(detection_dict.items()):
+        if vendor_result_dict["category"] != "undetected":
+            file_detected_only_dict[vendor] = vendor_result_dict
+
+    return file_detected_only_dict
+    """
+
+    url_detected_only_dict = {}
+    ignore_list = ["harmless", "undetected"]
+
+    for vendor, vendor_result_dict in sorted(detection_dict.items()):
+        if vendor_result_dict["category"] not in ignore_list:
+            url_detected_only_dict[vendor] = vendor_result_dict
+
+    return url_detected_only_dict
+
+
+def url_scan_results(url):
+    """
+    Options for scan result
+
+    categories, context_attributes, first_submission_date, from_dict,
+    get, html_meta, id, last_analysis_date, last_analysis_results,
+    last_analysis_stats, last_final_url, last_http_response_code,
+    last_http_response_content_length, last_http_response_content_sha256,
+    last_http_response_headers, last_modification_date,
+    last_submission_date, outgoing_links, relationships, reputation,
+    set_data, tags, threat_names, times_submitted, title, to_dict,
+    total_votes, trackers, type, url
+    """
+    url_id = vt.url_id(url)
+    # print(url_id)
+    url_result = client.get_object("/urls/{}", url_id)
+    # print(dir(url_result))
+
+    # url_dict = {
+    #     "categories": url_result.categories,
+    #     "context_attributes": url_result.context_attributes,
+    #     "from_dict": url_result.from_dict,
+    #     "get": url_result.get,
+    #     "html_meta": url_result.html_meta,
+    #     "id": url_result.id,
+    #     "last_analysis_date": url_result.last_analysis_date,
+    #     "last_analysis_results": url_result.last_analysis_results,
+    #     "last_analysis_stats": url_result.last_analysis_stats,
+    #     "last_final_url": url_result.last_final_url,
+    #     "last_http_response_code": url_result.last_http_response_code,
+    #     "last_http_response_content_length": url_result.last_http_response_content_length,
+    #     "last_http_response_content_sha256": url_result.last_http_response_content_sha256,
+    #     "last_http_response_headers": url_result.last_http_response_headers,
+    #     "last_modification_date": url_result.last_modification_date,
+    #     "last_submission_date": url_result.last_submission_date,
+    #     "outgoing_links": url_result.outgoing_links,
+    #     "relationships": url_result.relationships,
+    #     "reputation": url_result.reputation,
+    #     "set_data": url_result.set_data,
+    #     "tags": url_result.tags,
+    #     "threat_names": url_result.threat_names,
+    #     "times_submitted": url_result.times_submitted,
+    #     "title": url_result.title,
+    #     "to_dict": url_result.to_dict,
+    #     "total_votes": url_result.total_votes,
+    #     "trackers": url_result.trackers,
+    #     "type": url_result.type,
+    #     "url": url_result.url
+    # }
+
+    url_dict = {
+            "categories": url_result.categories,
+            "context_attributes": url_result.context_attributes,
+            "html_meta": url_result.html_meta,
+            "id": url_result.id,
+            "last_analysis_date": utils.datetime_to_string(url_result.last_analysis_date),
+            "last_analysis_results": url_detected_only_dict(url_result.last_analysis_results),
+            "last_analysis_stats": url_result.last_analysis_stats,
+            "last_final_url": url_result.last_final_url,
+            "last_http_response_code": url_result.last_http_response_code,
+            "last_http_response_content_length": url_result.last_http_response_content_length,
+            "last_http_response_content_sha256": url_result.last_http_response_content_sha256,
+            "last_http_response_headers": url_result.last_http_response_headers,
+            "last_modification_date": utils.datetime_to_string(url_result.last_modification_date),
+            "last_submission_date": utils.datetime_to_string(url_result.last_submission_date),
+            "outgoing_links": url_result.outgoing_links,
+            "relationships": url_result.relationships,
+            "reputation": url_result.reputation,
+            "tags": url_result.tags,
+            "threat_names": url_result.threat_names,
+            "times_submitted": url_result.times_submitted,
+            "title": url_result.title,
+            "total_votes": url_result.total_votes,
+            "trackers": url_result.trackers,
+            "type": url_result.type,
+            "url": url_result.url
+        }
+
+
+    return url_dict
+
+
 file_dir = os.path.dirname(os.path.abspath(__file__))
 api_key = get_apy_key()
 client = vt.Client(api_key)
 
 if __name__ == "__main__":
+
+    url = 'https://somedomain.com/foo/bar'
+    url_analysis_id = "u-f27971b54016fe671c69d4ac5101169ebb452064216233a5f194c1c2ada1f5fc-1646758848"  # scan_url(url)
+
+    print(url_analysis_id)
+    # analysis_status(url_analysis_id)
+    url_scan_results_dict = url_scan_results(url)
+
+    pprint(url_scan_results_dict, indent=4)
+
+    json_file_path = "url_results.json"
+    print(json_file_path)
+    utils.create_json_file(json_file_path, url_scan_results_dict)
+
+    sys.exit(0)
     file_dir_split = os.path.split(file_dir)
     sample_dir = os.path.join(file_dir_split[0], "sample")
     file_path = os.path.join(sample_dir, "Setup.exe")
