@@ -1,7 +1,7 @@
 import os
 import virus_total
 import utils
-import file_info
+from static.file_info import FileInfo
 from pprint import pprint
 from time import sleep
 import database
@@ -14,7 +14,7 @@ def add_samples_to_database(samples_dir):
         for file_name in files:
             file_path = os.path.join(root, file_name)
             if os.path.isfile:
-                file_info_object = file_info.FileInfo(file_path)
+                file_info_object = FileInfo(file_path)
                 file_info_dict = file_info_object.all_file_info_not_none()
                 file_md5 = file_info_dict["md5"]
                 mime_type = file_info_dict["mime_type"]
@@ -27,21 +27,21 @@ def add_samples_to_database(samples_dir):
 
                         md5_list.append(file_md5)
                         file_dict_list.append(file_info_dict)
-                        collection.insert_one(file_info_dict)
+                        virustotal_coll.insert_one(file_info_dict)
 
     return file_dict_list
 
 
 def upload_files():
     uploaded_query = {"uploaded": False}
-    total = collection.count_documents(uploaded_query)
+    total = virustotal_coll.count_documents(uploaded_query)
     count = 0
 
-    for doc in collection.find(uploaded_query)[0:total]:
+    for doc in virustotal_coll.find(uploaded_query)[0:total]:
         count += 1
         print(f"{utils.now()} - {count} of {total}")
         analysis_id = virus_total.upload_file(doc["file_path"])
-        collection.update_one(
+        virustotal_coll.update_one(
             {"_id": doc["_id"]},
             {"$set": {"uploaded": True, "analysis_id": analysis_id}},
             upsert=False
@@ -56,12 +56,12 @@ def upload_files():
 
 def retrieve_analysis_status():
     retrieve_query = {"uploaded": True, "vt_analysis_complete": False}
-    total = collection.count_documents(retrieve_query)
+    total = virustotal_coll.count_documents(retrieve_query)
     total_remaining = total
     count = 0
 
     while total_remaining > 0:
-        for doc in collection.find(retrieve_query):
+        for doc in virustotal_coll.find(retrieve_query):
             count += 1
             print(f"{utils.now()} - {count} of {total}")
             # pprint(doc, indent=4)
@@ -69,7 +69,7 @@ def retrieve_analysis_status():
                 doc["analysis_id"])
             if analysis_complete_status is True:
                 print(f"{utils.now()} - Analysis status: complete")
-                collection.update_one(
+                virustotal_coll.update_one(
                     {"_id": doc["_id"]},
                     {"$set": {"vt_analysis_complete": True,
                               "vt_analysis_retrieved": False}},
@@ -93,22 +93,22 @@ def retrieve_analysis_status():
 def retrieve_analysis_results():
     retrieve_query = {"vt_analysis_complete": True,
                       "vt_analysis_retrieved": False}
-    total = collection.count_documents(retrieve_query)
+    total = virustotal_coll.count_documents(retrieve_query)
     count = 0
 
-    for doc in collection.find(retrieve_query)[0:total]:
+    for doc in virustotal_coll.find(retrieve_query)[0:total]:
         count += 1
         print(f"{utils.now()} - {count} of {total}")
         pprint(doc, indent=4)
 
         # last_analysis_result = virus_total.last_analysis_results(doc["md5"])
         # pprint(last_analysis_result)
-        # collection.update_one({"_id":doc["_id"]}, {"$set": {"vt_analysis_retrieved": True, "last_analysis_result": last_analysis_result }}, upsert=False)
+        # virustotal_coll.update_one({"_id":doc["_id"]}, {"$set": {"vt_analysis_retrieved": True, "last_analysis_result": last_analysis_result }}, upsert=False)
 
         all_scan_results_dict = virus_total.all_scan_results(doc["md5"])
         pprint(all_scan_results_dict)
         for k, v in all_scan_results_dict.items():
-            collection.update_one(
+            virustotal_coll.update_one(
                 {"_id": doc["_id"]},
                 {"$set": {"vt_analysis_retrieved": True, k: v}},
                 upsert=False
@@ -120,16 +120,15 @@ def retrieve_analysis_results():
 
 
 virus_total_sleep_time = 20
-collection = database.virustotal_db.setup_exe_3
+virustotal_coll = database.virustotal_coll
 
 if __name__ == "__main__":
-    # file_dir = os.path.dirname(os.path.abspath(__file__))
-    # file_dir_split = os.path.split(file_dir)
-    # sample_dir = os.path.join(file_dir_split[0], "sample")
-    # add_samples_to_database(samples_dir=sample_dir)
-    # upload_files()
-
-    # retrieve_analysis_status()
-    # retrieve_analysis_results()
+    file_dir = os.path.dirname(os.path.abspath(__file__))
+    file_dir_split = os.path.split(file_dir)
+    sample_dir = os.path.join(file_dir_split[0], "sample")
+    add_samples_to_database(samples_dir=sample_dir)
+    upload_files()
+    retrieve_analysis_status()
+    retrieve_analysis_results()
 
     pass
