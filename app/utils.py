@@ -1,7 +1,7 @@
 from datetime import datetime
 import json
 import configparser
-
+from clint.textui import progress
 
 def get_config(config_file_path):
     config = configparser.ConfigParser()
