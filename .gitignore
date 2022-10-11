@@ -137,3 +137,4 @@ app/capa-rules/.gitattributes
 app/config/config.ini
 sample/
 reports/
+.DS_Store
